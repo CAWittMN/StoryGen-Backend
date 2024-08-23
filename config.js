@@ -18,17 +18,25 @@ const ELEVENLABS_VOICE_ID = process.env.ELEVENLABS_VOICE_ID;
 const PORT = process.env.PORT || 5000;
 console.log("---");
 console.log("Story_Gen Config:".cyan);
-console.log("SECRET_KEY:".yellow, SECRET_KEY);
-console.log("PORT:".yellow, PORT.toString());
-console.log("BCRYPT_WORK_FACTOR".yellow, BCRYPT_WORK_FACTOR);
-console.log("Database:".yellow, DB_URI);
 console.log(
-  "OpenAI API Key Loaded:".yellow,
+  "SECRET_KEY provided: ".yellow,
+  SECRET_KEY === "secret" ? "No".red : "Yes".green
+);
+console.log("PORT: ".yellow, PORT.toString());
+console.log("BCRYPT_WORK_FACTOR: ".yellow, BCRYPT_WORK_FACTOR);
+console.log("Database URI loaded: ".yellow, DB_URI ? "Yes".green : "No".red);
+console.log(
+  "OpenAI API Key Loaded: ".yellow,
   OPENAI_API_KEY !== undefined ? "Yes".green : "No".red
 );
+console.log("Open AI Model: ", `${OPENAI_API_MODEL}`.green);
 console.log(
-  "Eleven Labs API Key Loaded:".yellow,
+  "Eleven Labs API Key Loaded: ".yellow,
   ELEVENLABS_API_KEY !== undefined ? "Yes".green : "No".red
+);
+console.log(
+  "Eleven Labs Voice ID: ",
+  ELEVENLABS_VOICE_ID ? `${ELEVENLABS_VOICE_ID}`.green : "Not Loaded".red
 );
 console.log("---");
 
