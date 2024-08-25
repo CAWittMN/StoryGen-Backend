@@ -13,8 +13,8 @@ const testConnection = async () => {
     console.error("Unable to connect to the database:".red, error);
   }
 };
+testConnection();
 
 db.sync(); // uncomment to initiate the database tables
-testConnection();
 
 module.exports = db;
