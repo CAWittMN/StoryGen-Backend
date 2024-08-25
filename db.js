@@ -1,8 +1,8 @@
 const { Sequelize } = require("sequelize");
-const { DB_URI } = require("./config");
+const { DB_URI, DB_OPTIONS } = require("./config");
 
 console.log("Connecting to database...".cyan);
-const db = new Sequelize(DB_URI);
+const db = new Sequelize(DB_URI, DB_OPTIONS);
 const testConnection = async () => {
   try {
     console.log("Authenticating...".cyan);

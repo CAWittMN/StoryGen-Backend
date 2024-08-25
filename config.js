@@ -16,6 +16,10 @@ const ELEVENLABS_API_KEY = process.env.ELEVENLABS_API_KEY;
 const ELEVENLABS_VOICE_ID = process.env.ELEVENLABS_VOICE_ID;
 
 const PORT = process.env.PORT || 5000;
+
+const DB_OPTIONS = {
+  ssl: true,
+};
 console.log("---");
 console.log("Story_Gen Config:".cyan);
 console.log(
@@ -42,6 +46,7 @@ console.log("---");
 
 module.exports = {
   DB_URI,
+  DB_OPTIONS,
   SECRET_KEY,
   BCRYPT_WORK_FACTOR,
   OPENAI_API_KEY,
