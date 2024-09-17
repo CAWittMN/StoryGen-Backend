@@ -127,7 +127,7 @@ class StoryGenAiApi {
         "xi-api-key": ELEVENLABS_API_KEY,
       },
       data: {
-        text: "This is just a test.",
+        text: text,
       },
       responseType: "arraybuffer",
     };
