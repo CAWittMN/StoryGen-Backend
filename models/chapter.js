@@ -21,7 +21,7 @@ class Chapter extends Model {
     }
 
     const [img, audio] = await Promise.all([
-      story.genImage ? storyGenAi.generateImage(content.imgPrompt) : null,
+      story.genImages ? storyGenAi.generateImage(content.imgPrompt) : null,
       story.genAudio ? storyGenAi.generateAudio(content.text) : null,
     ]);
 
