@@ -19,20 +19,11 @@ class Chapter extends Model {
     if (content.validResponse === false) {
       return content;
     }
-    let img = null;
-    let audio = null;
-    if (story.genImages && story.genAudio) {
-      const results = await Promise.all([
-        storyGenAi.generateImage(content.imgPrompt),
-        storyGenAi.generateAudio(content.text),
-      ]);
-      img = results[0];
-      audio = results[1];
-    } else if (story.genAudio && !story.genImage) {
-      audio = await storyGenAi.generateAudio(content.text);
-    } else if (!story.genAudio && story.genImages) {
-      img = await storyGenAi.generateImage(content.imgPrompt);
-    }
+
+    const [img, audio] = await Promise.all([
+      story.genImage ? storyGenAi.generateImage(content.imgPrompt) : null,
+      story.genAudio ? storyGenAi.generateAudio(content.text) : null,
+    ]);
 
     // create new chapter in database.
     const newChapter = await Chapter.create({
@@ -54,10 +45,16 @@ class Chapter extends Model {
     if (content.setting) {
       newChapter.setting = content.setting;
     }
+    newChapter.dataValues.charAlive = content.charAlive;
     newChapter.charAlive = content.charAlive;
     newChapter.newSummary = content.summary;
 
     return newChapter;
+  }
+
+  static async deleteLatestChapter(threadID) {
+    const deletedData = await storyGenAi.deleteChapter(threadID);
+    return deletedData;
   }
 }
 

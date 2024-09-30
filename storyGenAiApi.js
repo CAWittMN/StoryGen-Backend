@@ -29,14 +29,14 @@ class StoryGenAiApi {
       ? `The story is set in ${setting}. `
       : `The setting of the story is not specified and you will decide the setting. Please include the setting in the JSON for the first chapter as the key "setting". `;
     const basicInstructionsEnd = ` You will generate the title of the story include it in the JSON for the first chapter as the key "title". `;
-    const chapterInstructions = `As long as the character lives, this story will conclude in ${maxChapters} chapters, NO MORE THAN THAT, so make sure the story can conclude within that amount of chapters. Each chapter should be around 250 words with the first and last chapter being longer, and end with a choice, action, question to answer, riddle to answer, etc. for the character to respond to. Be as creative as you can be and introduce twists into the story sometimes. Do not leave the chapter open ended or in a way that the user is deciding what happens for the story. You should have some idea of where the story will lead from the beginning, but the story can also grow organically. ${additionalPrompt}`;
+    const chapterInstructions = ` You will only generate ${maxChapters} chapters, NO MORE THAN THAT, so make sure the story will conclude within ${maxChapters}. The last few chapters should be part of the climax and conclude the story in the final ${maxChapters}th chapter. Keep track of how many chapters you generate as you will be in control of concluding the story and wrapping up the storyline. Each chapter should be around 200 words with the first and last chapter being longer (around 250 words), and end with a choice, question to answer, riddle to answer, or an action event for the character to respond to. Be as creative as you can be and introduce twists into the story sometimes. Do not leave the chapter open ended or in a way that the user is broadly deciding what happens for the story (for example, don't ask "does the character succeed or fail?". You decide if the character succeeds or fails). You can let the story grow organically,  ${additionalPrompt}`;
     const userResponseInstructions = `The user will respond to the choice or action from each chapter (except for the last chapter so make sure the final choice or challenge is on the ${
       maxChapters - 1
     }th chapter). You will decide the outcome and continue the story. The user's input should be considered only an attempt for an action and you will decide whether it was successful or how to incorporate it into the story. `;
     const userResponseRestrictions =
       "If the users response does not make sense within the context of the story, you should respond ONLY with the JSON { validResponse: false, message: (a message explaining why the response was invalid)}. ";
     const userResponseDeath =
-      "If you deem that the users response would result in the death of the character, you will still generate the chapter which will conclude the story with the character's death, however, you will return { charAlive: false } in the JSON response. ";
+      "If you deem that the users response would result in the death of the character, you will still generate the chapter which will conclude the story with the character's death, however, you will return { charAlive: false } in the JSON response. You will respond { charAlive: true } if the character did not die during the chapter.";
     const responseContent =
       "Your response will include the title for the chapter, text for the new chapter, a short summary of the entire story so far, whether the character is still alive or not, whether the users response was valid or not, the title of the story with the first chapter data only";
     const responseContentSetting = setting
@@ -154,6 +154,19 @@ class StoryGenAiApi {
     // convert base64 to buffer
     const imgBuffer = await Buffer.from(imgData, "base64");
     return imgBuffer;
+  }
+
+  async deleteChapter(threadID, userMessageID = null, responseID = null) {
+    if (!userMessageID && !responseID) {
+      const messages = await openAi.beta.threads.messages.list(threadID);
+      responseID = messages.data[0].id;
+      userMessageID = messages.data[1].id;
+    }
+    const deletedMessages = await Promise.all(
+      openAi.beta.threads.messages.del(threadID, responseID),
+      openAi.beta.threads.messages.del(threadID, userMessageID)
+    );
+    return deletedMessages;
   }
 }
 

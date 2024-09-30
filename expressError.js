@@ -44,6 +44,14 @@ class ElevenLabsAPIError extends ExpressError {
   }
 }
 
+class GenerationError extends ExpressError {
+  constructor(
+    message = "There was an issue with the generation. Please try again."
+  ) {
+    super(message, 400);
+  }
+}
+
 module.exports = {
   ExpressError,
   NotFoundError,
@@ -52,4 +60,5 @@ module.exports = {
   ForbiddenError,
   UnprocessableEntityError,
   ElevenLabsAPIError,
+  GenerationError,
 };

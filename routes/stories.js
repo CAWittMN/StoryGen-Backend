@@ -7,7 +7,7 @@ const {
   convertBufferImage,
   convertBufferAudio,
 } = require("../helpers/convertBuffer");
-const { BadRequestError } = require("../expressError");
+const { BadRequestError, GenerationError } = require("../expressError");
 const jsonschema = require("jsonschema");
 const newStorySchema = require("../schemas/newStory.json");
 
@@ -108,7 +108,7 @@ router.post("/:username/new", ensureCorrectUser, async (req, res, next) => {
       }
     } catch (error) {
       newStory.destroy();
-      return next(error);
+      throw new GenerationError(error);
     }
     newStory.update({
       currSummary: firstChapter.newSummary,
@@ -121,7 +121,6 @@ router.post("/:username/new", ensureCorrectUser, async (req, res, next) => {
 
     return res.status(201).json({ story: newStory });
   } catch (error) {
-    console.error(error);
     return next(error);
   }
 });
@@ -136,12 +135,12 @@ router.post(
   ensureCorrectUser,
   async (req, res, next) => {
     // get story info
+    const { storyId } = req.params;
+    const { userPrompt } = req.body;
+    const story = await Story.findOne({
+      where: { id: storyId },
+    });
     try {
-      const { storyId } = req.params;
-      const { userPrompt } = req.body;
-      const story = await Story.findOne({
-        where: { id: storyId },
-      });
       //create new chapter
       const chapter = await Chapter.generateNewChapter(story, userPrompt);
       // check if user input deemed invalid and return if so
@@ -168,9 +167,10 @@ router.post(
       if (chapter.audio) {
         chapter.audio = await convertBufferAudio(chapter.audio);
       }
-
+      console.log(chapter);
       return res.status(201).json({ chapter });
     } catch (error) {
+      const deletedChapter = await Chapter.deleteLatestChapter(story.threadId);
       return next(error);
     }
   }
