@@ -167,7 +167,6 @@ router.post(
       if (chapter.audio) {
         chapter.audio = await convertBufferAudio(chapter.audio);
       }
-      console.log(chapter);
       return res.status(201).json({ chapter });
     } catch (error) {
       const deletedChapter = await Chapter.deleteLatestChapter(story.threadId);
