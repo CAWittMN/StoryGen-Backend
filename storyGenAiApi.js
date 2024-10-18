@@ -107,6 +107,11 @@ class StoryGenAiApi {
       userInput =
         userInput +
         " This is the final chapter of the story. Please conclude the story with an ending!";
+    } else {
+      if (Math.ceil(Math.random()) == 5) {
+        userInput =
+          userInput + " Please introduce a plot twist in this chapter!";
+      }
     }
     const threadId = story.threadId;
     const message = await this.openAi.beta.threads.messages.create(threadId, {
