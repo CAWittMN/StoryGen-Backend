@@ -94,6 +94,20 @@ class StoryGenAiApi {
     story,
     userInput = "Start the first chapter of the story."
   ) {
+    if (story.completedChapters + 1 == story.maxChapters / 2) {
+      userInput = userInput + " Please introduce a plot twist in this chapter!";
+    } else if (
+      story.completedChapters + 1 ==
+      Math.floor((story.maxChapters / 4) * 3)
+    ) {
+      userInput =
+        userInput +
+        " Please start moving the story towards the climax! The story is about 3/4 of the way done.";
+    } else if (story.completedChapters + 1 == story.maxChapters) {
+      userInput =
+        userInput +
+        " This is the final chapter of the story. Please conclude the story with an ending!";
+    }
     const threadId = story.threadId;
     const message = await this.openAi.beta.threads.messages.create(threadId, {
       role: "user",
